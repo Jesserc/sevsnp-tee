@@ -146,7 +146,7 @@ if __name__ == "__main__":
 
     print("\nSignature parameters:")
     sig, msg, e, n = get_signature_params(jwt)
-    # print(f"Signature (hex): {sig}")
-    # print(f"Message (hex): {msg}")
-    # print(f"Exponent (hex): {e}")
-    # print(f"Modulus (hex): {n}")
+    print(f"Signature (hex): {sig}")
+    print(f"Message (hex): {msg}")
+    print(f"Exponent (hex): {e}")
+    print(f"Modulus (hex): {n}")
