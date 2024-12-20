@@ -20,7 +20,7 @@ source venv/bin/activate  # On Windows use `venv\Scripts\activate`
 pip install -r requirements.txt
 ```
 
-# Decode Attestation Report
+# Decoded Attestation Report
 ## Header
 ```json
 {
