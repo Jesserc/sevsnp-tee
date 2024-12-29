@@ -163,10 +163,6 @@ def get_attested_price():
         capture_output=True,
     )
     jwt = proc.stdout.decode()
-
-    # 3. Process JWT and get params for contract
-    # params = get_price_signature_params(jwt)
-    # return params
     return jwt
 
 
