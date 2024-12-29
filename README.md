@@ -1,7 +1,9 @@
 # On-Chain RSA Signature Verification for Azure SEV-SNP confidential VM
 
 ## Overview
-This project aims to demonstrate on-chain RSA signature verification for Azure SEV-SNP (Secure Encrypted Virtualization - Secure Nested Paging) Cloud Virtual Machines (CVMs). The goal is to provide a mechanism for verifying the integrity and authenticity of data processed within a Trusted Execution Environment (TEE).
+This project aims to demonstrate on-chain verification for AMD SEV-SNP (Secure Encrypted Virtualization - Secure Nested Paging) TEE. The goal is to provide a mechanism for verifying the integrity and authenticity of data processed within a Trusted Execution Environment (TEE). 
+
+This project uses AMD SEV-SNP TEE on Azure cloud.
 
 ## Setup
 1. Clone the repository:
@@ -21,6 +23,8 @@ pip install -r requirements.txt
 ```
 
 # Decoded Attestation Report
+*NOTE: The Attestation report is in JWT format, which is **Base64url** encoded, and some inner values, like nonce and price, are further **Base64** encoded.
+This is the decoded attestation report.*
 ## Header
 ```json
 {
@@ -35,11 +39,11 @@ pip install -r requirements.txt
 ## Payload
 ```json
 {
-  "exp": 1734747894,
-  "iat": 1734719094,
+  "exp": 1735520673,
+  "iat": 1735491873,
   "iss": "https://sharedeus2.eus2.attest.azure.net",
-  "jti": "faefb2918d2b57928d1aa5e8fc2ca188d4f10115834bddc10181e929b14205c5",
-  "nbf": 1734719094,
+  "jti": "306e081393b2f30c0af3017d7ebc4ee05818961a0c9d10460dfaabae231a73da",
+  "nbf": 1735491873,
   "secureboot": true,
   "x-ms-attestation-type": "azurevm",
   "x-ms-azurevm-attestation-protocol-ver": "2.0",
@@ -71,7 +75,7 @@ pip install -r requirements.txt
   "x-ms-azurevm-osversion-minor": 4,
   "x-ms-azurevm-signingdisabled": true,
   "x-ms-azurevm-testsigning-enabled": false,
-  "x-ms-azurevm-vmid": "9A42ABD5-8385-42B3-9255-FE7807698194",
+  "x-ms-azurevm-vmid": "1588CFD1-4BCA-40E9-8FA1-A29F3EDDFCD9",
   "x-ms-isolation-tee": {
     "x-ms-attestation-type": "sevsnpvm",
     "x-ms-compliance-status": "azure-compliant-cvm",
@@ -84,7 +88,7 @@ pip install -r requirements.txt
           ],
           "kid": "HCLAkPub",
           "kty": "RSA",
-          "n": "p5uigAAAL175E0DxAta28tOOA1IKTxbwl3LWkRNfTpvf9kJPt-j1hpNFZfxTepQaNFJbtqSBqQaPpc8b8UEKN5Ikv1LIfKAAxFuFRIfo0dPqhnQt8hf-4g4Bnm4yt0TLwzRXPvm0pxfJaOjHBlpDeagsRX9kRNUjqgUitQpmT6H3Wq4s-7wwNPEQtGdnads_nk_vaz2yIu4_XKF2E-b7QLZzrMYk2l-X9Mik4GNW3VgSFsMeNhIVFjvQoF2LyZDfvUZwyz1ZEDV3EU3VI2rwDzDLrJtZN1_piALzK0JndXcUiCwYqalzJKan_tyefWrXUwsi0u7_Sn263CwOFOTUyw"
+          "n": "pngUgQABC2ieAWrd1qyM14oVNkIS71D1UkyzYFHPu1nHPgPhH2oF4MPumYBS_OBeBjSY-L7KzD-ochGZe0ixqYzEhpHMh1YARIVOHVl7nDvU4R923A5pPzOHbRcN85a5HuqVVmDPcC3Ju8-oL-xIFmFnDlmN0q2EfC9Nt74Z_tftPvdXTUhw7camQ1zHY9so5k2S1pIKUvY5mcCsLVKjQaayVbaX4ag_pOZyp6PK5RqDB4g1Nurtz4S1BcqFlVE_LcKEMsA1rWJZoiNvp6HCr9U9vpWCnAqAYAEcFq9lBhITb7Yif_9zKrIbUeHZujFtphWRB3EyM6-ip5YlaRqBGw"
         },
         {
           "e": "AQAB",
@@ -93,7 +97,7 @@ pip install -r requirements.txt
           ],
           "kid": "HCLEkPub",
           "kty": "RSA",
-          "n": "wD03cAAAolev7yiHjVWgZp42vh7Cm6PzXPkqsLXYRbIJBwSeObFCTABGoTQWfk8Irh1PhPXee09s2SV4m7gYuc2CWD3Re6Ld7bdPsc5XAjfl8BPcp2bGVbNbjRpxI_Dq097n8KNZGQMuxKdoukigYuhZhiuzyhIXTY8XRH4Maade8ADGbHxqWMrhoNOY8HT-rsMTDBSxKIkd1CXF7OUzLoOMlbhqO4gKGH8vUjInwLf3AyobhuxglbbT3l6ookCCSI1JIm_BMAcj73_KH5MMediE1Aio3m1fxP8WMlaZxZyGhfaVw0fspSbpCyul3cftopM6NBkqg7X3T_lsv2N6Sw"
+          "n": "vwlYDAAAb5LonvSpZhCXvycDvwbMiClpjcwq5j_YjMrbL610iqoJcUkF-AXS4y4p3NyRlMPdfJ9pJrGYeUVWptb-kPdsy35TEgGlsZ7N7UJxJZWwEVQozdyAPwvukvo7jathgmZp6ig5uZM_itfZ5WuvpWQkJZOI82N9NMeqsxJ5vaDagStH0zNDvBzpEpGrPZAXH3QNoZO52fbSyXBQof6o_mPA-pTDjC3YZMII7q1znBgRtz0x3FJ_pRPnxccA60vIBVs2efQOQpzOLVZAJHbWt2FecGZ5vT3LH9R1b5AiNxo6TY3pKfDK34wnOKJ2sSw9WaR_tg5R6ZjRXwtm2w"
         }
       ],
       "user-data": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
@@ -101,7 +105,7 @@ pip install -r requirements.txt
         "console-enabled": true,
         "secure-boot": true,
         "tpm-enabled": true,
-        "vmUniqueId": "9A42ABD5-8385-42B3-9255-FE7807698194"
+        "vmUniqueId": "1588CFD1-4BCA-40E9-8FA1-A29F3EDDFCD9"
       }
     },
     "x-ms-sevsnpvm-authorkeydigest": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
@@ -115,8 +119,8 @@ pip install -r requirements.txt
     "x-ms-sevsnpvm-launchmeasurement": "036fc22b517981a791f7f8b89d634a00e964f6b0dfabc568090eb4393d6026f96aa6b7cca2759f29e521469f1189c00c",
     "x-ms-sevsnpvm-microcode-svn": 211,
     "x-ms-sevsnpvm-migration-allowed": false,
-    "x-ms-sevsnpvm-reportdata": "bce8ee65d40931a9b33e1a29869bb23df4dd8097f038898f6b2acbb445d386a50000000000000000000000000000000000000000000000000000000000000000",
-    "x-ms-sevsnpvm-reportid": "6b3247d1e0e2e07360c11bfcbbeaf1d4b8d42c5310601e90c32ebc68a5a16e84",
+    "x-ms-sevsnpvm-reportdata": "d6039652c4e30390b0b4484e53237c2c29e06b32078b9b4436d36769150298ba0000000000000000000000000000000000000000000000000000000000000000",
+    "x-ms-sevsnpvm-reportid": "318f3518064eb76ec282397c599492ec295fa43a795b99b781c9c464a8282953",
     "x-ms-sevsnpvm-smt-allowed": true,
     "x-ms-sevsnpvm-snpfw-svn": 21,
     "x-ms-sevsnpvm-tee-svn": 0,
@@ -125,7 +129,9 @@ pip install -r requirements.txt
   "x-ms-policy-hash": "wm9mHlvTU82e8UqoOy1Yj1FBRSNkfe99-69IYDq9eWs",
   "x-ms-runtime": {
     "client-payload": {
-      "nonce": ""
+      "nonce": "Y29pbm1hcmtldGNhcC5jb20=",
+      "price": "MzM0OS45NzU3NTM5NzQ1NDM3",
+      "timestamp": "MTczNTQ5MTg3Mg=="
     },
     "keys": [
       {
@@ -135,7 +141,7 @@ pip install -r requirements.txt
         ],
         "kid": "TpmEphemeralEncryptionKey",
         "kty": "RSA",
-        "n": "wKq5DAAApeieiGeeLsW7VMdeXaPUuBCaZcGZyMCY7uN_qywEpJL7m2tReWd0DskTeRZ053747Sqffmgo5csdeoT1RkapSwh-jlvvzfhD0OaV1ATfFAxMPy1_xVCQ8i6pb-vOzykVre3oaRLiARaawwn0325K-VhfZJecMkR19F06V7hwy6E6P16rWNHqCj7eqlfZJfihFAYt17RHXzViFtF47rWtSJJXtC2_gFc79du5YqmffanVPdVdPpkP0mQxSt5AQH_LZE7ny3XKtCOQYSwLp44uVVOPVpc011HNlxuk0utDXbltiZwoISW9ran2IcdVZdrGe8DvOR7lfA5JXw"
+        "n": "xvBXhAAAjaKiTunomRDGoX9VaqpDx_d-YKknggtksNeOt14auPSBHbFfKad5-juA6FkQc9D2Q01ZBEumM70yv3zlXw9LpnzhwSLeQXJAa-XTCivc8YE15ESOVY3-1suahbbV-gtlFNLHCSr-x5P4XsHMaZ9RR75EGu60NPRr-Ws3GFzS31c1jOOJ9wBRRXFwWoWBaJHUUHPRfxd1Bp0PiuO1k19JaMxH9Qkugh6fkw6bPRL1xA4kXR7KEtYuI2p7kmhqnddvVac1b5v0EsZ_AHWv_NkZxurrSkI5Z6CV64AIGd19DskIeeP3Nm7UkQoC8CEiPgD1ZferkN3zBDIXBw"
       }
     ]
   },
@@ -145,5 +151,5 @@ pip install -r requirements.txt
 
 ## Signature
 ```bash
-vl6lGLG9TDPK8zjrTSmyUeH9c85Cw1lw7ON9qKLuWNHTusZHFnhpieLISb9h5MAN_7EaL_uirtPAK7rII30Zbokka9hQCQqpJ18ZGozZRg99gfYsO3PIKqtt7hNQyP5Rs9bQaSbU8llKwxLP3aUHCjK4lQnIB29-QQVZ36uu393OBTH0wIE55TpapSyasIQvDgoGdFO69cZzNcQElPpp7xZjc1QDBkoGW6mG3b4sU4aVMw7erLIaD71FguHVfl0QrWBc542M_1jhsfMJaCJ-I5dtvIZPvMb_cIr_MHVb1vxnzH8QjJSvNDHxTSKs_NUKIhHO3lhfcnjypRzw  
+sJtpL4veGuSa8PDZ_JFogDiZOqMtNoR9e57kY7dxeazikRhkfAjNivLRSkOvcdjxNLVZSgApoUzMB6OF_M-QnffTLY9iYHQTmkQN4ggBHffQJzAG3EOpyS2OqPlS_0qvHNSbCqIGW_a_HLyRrzwh4-4XSF486PjVkeQS9QJO2mcrCbzXfX8xYlqvUw3-j0NvPiH4NNyzmIBJoL8zIwuef_p94GLRm21FP-P8Jwbs6VtX3yMYy4pGYTNTpvNRGoVEO6jOfmFyaO8OIsSU2jYndN31dlieU4dlLbHLenVxbNk1hile_RYhUlDE5ve5Tbu64DqQD9AzMsD1_hh_b2viEw
 ```
