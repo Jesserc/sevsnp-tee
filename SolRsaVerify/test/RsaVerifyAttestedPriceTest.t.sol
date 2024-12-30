@@ -21,7 +21,7 @@ contract RsaVerifyAttestedPriceTest is Test {
             bytes memory modulus
         ) = abi.decode(result, (bytes, bytes, bytes, bytes));
 
-        emit log_named_bytes("Signature", signature);
+        // emit log_named_bytes("Signature", signature);
         // emit log_named_bytes("MessageHash", message);
         // emit log_named_bytes("Exponent", exponent);
         // emit log_named_bytes("Modulus", modulus);
