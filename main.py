@@ -130,7 +130,7 @@ def get_signature_params(jwt: str):
     e_hex = signing_key.public_numbers().e.to_bytes(4, "big").hex()
     n_hex = signing_key.public_numbers().n.to_bytes(256, "big").hex()
 
-    return signature_hex, message_hex, e_hex, n_hex
+    return message_hex, signature_hex, e_hex, n_hex
 
 
 def get_price_from_cmc():
@@ -174,7 +174,7 @@ if __name__ == "__main__":
 
     if not is_valid:
         raise Exception("Invalid attestation report")
-    
+
     # Get signature parameters
     sig, msg, e, n = get_signature_params(jwt)
 
