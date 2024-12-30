@@ -1,0 +1,3 @@
+[submodule "confidential-computing-cvm-guest-attestation"]
+	path = confidential-computing-cvm-guest-attestation
+	url = https://github.com/Jesserc/confidential-computing-cvm-guest-attestation
