@@ -176,17 +176,17 @@ if __name__ == "__main__":
         raise Exception("Invalid attestation report")
 
     # Get signature parameters
-    sig, msg, e, n = get_signature_params(jwt)
+    msg, sig, e, n = get_signature_params(jwt)
 
     # Convert hex strings to bytes for ABI encoding [needed for Solidity bytes type]
-    sig_bytes = bytes.fromhex(sig)
     msg_bytes = bytes.fromhex(msg)
+    sig_bytes = bytes.fromhex(sig)
     e_bytes = bytes.fromhex(e)
     n_bytes = bytes.fromhex(n)
 
     # Encode params as (bytes, bytes, bytes, bytes) for Solidity
     encoded = encode(
-        ["bytes", "bytes", "bytes", "bytes"], [sig_bytes, msg_bytes, e_bytes, n_bytes]
+        ["bytes", "bytes", "bytes", "bytes"], [msg_bytes, sig_bytes, e_bytes, n_bytes]
     )
 
     # Print encoded params for Foundry FFI use

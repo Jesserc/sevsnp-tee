@@ -15,8 +15,8 @@ contract RsaVerifyAttestedPriceTest is Test {
 
         // Decode the ABI-encoded parameters
         (
-            bytes memory signature,
             bytes memory message, 
+            bytes memory signature,
             bytes memory exponent,
             bytes memory modulus
         ) = abi.decode(result, (bytes, bytes, bytes, bytes));
