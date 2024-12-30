@@ -6,6 +6,7 @@ from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import padding, rsa
 from cryptography.hazmat.backends import default_backend
 import subprocess
+from eth_abi import encode
 
 
 def fix_base64_padding(b64_string):
@@ -77,20 +78,14 @@ def verify_azure_attestation(jwt: str):
         "kid"
     ]  # [Get KID from JWT header - Key ID that signed this attestation]
 
-    print("=== Fetching Signing Key ===")
-    print(f"JKU URL: {jku_url}")
-    print(f"Key ID: {kid}")
-
     signing_key = get_signing_key(
         jku_url, kid
     )  # [Fetch the specific signing key from Azure attestation service]
 
-    print("\n=== Debug Information ===")
     key_info = signing_key.public_bytes(
         encoding=serialization.Encoding.PEM,
         format=serialization.PublicFormat.SubjectPublicKeyInfo,
     )
-    print("Signing key PEM format:", key_info.decode("utf-8"))
 
     try:
         signing_key.verify(
@@ -99,7 +94,7 @@ def verify_azure_attestation(jwt: str):
             padding.PKCS1v15(),  # [RSA PKCS#1 v1.5 padding]
             hashes.SHA256(),  # [SHA-256 hash of message]
         )
-        print("Signature is valid!")  # [Attestation is genuine]
+        # print("Signature is valid!")  # [Attestation is genuine]
         return True
     except InvalidSignature:
         print("Invalid signature - verification failed")
@@ -154,15 +149,19 @@ def get_attested_price():
     proc = subprocess.run(
         [
             "sudo",
-            "./AttestationClient",  # Calls our C++ program
+            "/home/jesserc/sevsnp-cvm/AttestationClient",  # Calls our C++ program
             "-p",
             str(price),
             "-o",
             "TOKEN",
+            "-n",
+            "coinmarketcap.com",
         ],
         capture_output=True,
     )
     jwt = proc.stdout.decode()
+
+    # 3. Process JWT and get params for contract
     return jwt
 
 
@@ -171,14 +170,21 @@ if __name__ == "__main__":
     jwt = get_attested_price()
     jwt = jwt.strip()
 
-    print("Verifying Azure attestation:")
     is_valid = verify_azure_attestation(jwt)
-    print(f"Attestation is valid: {is_valid}")
 
-    print("\nSignature parameters:")
-    # Extract the signature, signed message, public key exponent, and modulus from the JWT
+    # Get signature parameters
     sig, msg, e, n = get_signature_params(jwt)
-    print(f"Signature (hex): {sig}")
-    print(f"Message (hex): {msg}")
-    print(f"Exponent (hex): {e}")
-    print(f"Modulus (hex): {n}")
+
+    # Convert hex strings to bytes for ABI encoding [needed for Solidity bytes type]
+    sig_bytes = bytes.fromhex(sig)
+    msg_bytes = bytes.fromhex(msg)
+    e_bytes = bytes.fromhex(e)
+    n_bytes = bytes.fromhex(n)
+
+    # Encode params as (bytes, bytes, bytes, bytes) for Solidity
+    encoded = encode(
+        ["bytes", "bytes", "bytes", "bytes"], [sig_bytes, msg_bytes, e_bytes, n_bytes]
+    )
+
+    # Print encoded params for Foundry FFI use
+    print(encoded.hex())
