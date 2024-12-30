@@ -172,6 +172,9 @@ if __name__ == "__main__":
 
     is_valid = verify_azure_attestation(jwt)
 
+    if not is_valid:
+        raise Exception("Invalid attestation report")
+    
     # Get signature parameters
     sig, msg, e, n = get_signature_params(jwt)
 
