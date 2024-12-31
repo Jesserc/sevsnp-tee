@@ -77,7 +77,7 @@ cd /home/jesserc/sevsnp-cvm/SolRsaVerify || {
 
 # Run Forge test with FFI enabled
 echo "Running Solidity verification test..."
-forge test --mc RsaVerifyAttestedPriceTest --ffi -vv
+forge test --mc AzureTEEVerifierTest --ffi -vvvvvv
 
 # Check Forge test exit status
 if [ $? -eq 0 ]; then
