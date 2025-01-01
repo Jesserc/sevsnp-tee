@@ -1,25 +1,30 @@
 #!/bin/bash
 # chmod +x ./run_attestation.sh
 
-# Function to install pip3 if not available
-install_pip3() {
-    echo "pip3 not found. Attempting to install..."
-    if ! command -v snap &> /dev/null; then
-        echo "Error: snap not found. Please install snapd first"
-        exit 1
-    fi
-    
-    sudo snap install pip || {
-        echo "Error: Failed to install pip via snap"
-        exit 1
-    }
-}
-
 # Check if python3 is installed
 if ! command -v python3 &> /dev/null; then
     echo "Error: python3 is not installed"
     exit 1
 fi
+
+# Function to install pip3 if not available
+install_pip3() {
+    echo "pip3 not found. Attempting to install..."
+    
+    # Update package list first to ensure we can find python3-pip
+    sudo apt-get update || {
+        echo "Error: Failed to update package list"
+        exit 1
+    }
+    
+    # Install python3-pip package
+    sudo apt-get install -y python3-pip || {
+        echo "Error: Failed to install python3-pip"
+        exit 1
+    }
+    
+    echo "Successfully installed pip3"
+}
 
 # Check if pip3 is installed, install if not
 if ! command -v pip3 &> /dev/null; then
