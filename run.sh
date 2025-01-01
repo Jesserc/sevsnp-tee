@@ -50,7 +50,7 @@ if [ ! -x "./AttestationClient" ]; then
 fi
 
 # Check if Solidity test file exists
-TEST_PATH="/home/jesserc/sevsnp-cvm/SolRsaVerify/test/RsaVerifyAttestedPriceTest.t.sol"
+TEST_PATH="/home/jesserc/sevsnp-cvm/SolRsaVerify/test/AzureTEEVerifier.t.sol"
 if [ ! -f "$TEST_PATH" ]; then
     echo "Error: Test file not found at $TEST_PATH"
     exit 1
