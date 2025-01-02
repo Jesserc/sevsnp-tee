@@ -29,8 +29,11 @@ This project enables secure price attestation for Ethereum applications running 
 
 ```bash
 ssh -i <path/to/you/rsa/private/key>.pem <username>@<vm-ip>
-# e.g. ssh -i rsa-key.pem jesserc@72.50.96.28 
+# e.g. ssh -i rsa-key.pem jesserc@72.50.96.28
 ```
+
+If you get a permission issue, you can make the key read-only to solve it. Run:
+`chmod 400 <path/to/you/rsa/private/key>.pem`.
 
 2. Clone repositories:
 
@@ -43,10 +46,9 @@ cd  sevsnp-tee
 
 ```bash
 sudo apt-get update
+
 sudo apt-get install -y build-essential libcurl4-openssl-dev libjsoncpp-dev libboost-all-dev cmake nlohmann-json3-dev
 ```
-Note: While some of these dependencies are installing, you'll see two types of prompts - just press 'yes' for package installation and Enter for service restart  (like the screenshot below). Feel free to read the details.
-![alt text](<Screenshot 2024-12-20 at 6.10.21 PM.png>)
 
 4. Install Azure attestation package [Provides hardware attestation capabilities]:
 
@@ -63,7 +65,17 @@ cmake .
 make
 ```
 
-6. Install Python package manager (pip3) and required Python packages:
+6. Copy Attestation client binary to the project root and go back:
+
+```bash
+cp AttestationClient ../../
+cd ../../
+```
+
+7. Install Foundry for Solidity testing:
+   Follow instructions at https://getfoundry.sh
+
+8. Install Python package manager (pip3) and required Python packages:
 
 ```bash
 # Install pip3
@@ -71,19 +83,6 @@ sudo apt-get install -y python3-pip
 
 # Install required Python packages:
 pip3 install requests cryptography eth-abi
-```
-
-```bash
-pip3 install --user requests cryptography eth-abi
-```
-
-7. Install Foundry for Solidity testing:
-   Follow instructions at https://getfoundry.sh
-
-8. Configure permissions:
-
-```bash
-cp confidential-computing-cvm-guest-attestation/cvm-attestation-sample-app/AttestationClient  ../
 ```
 
 ## Usage
