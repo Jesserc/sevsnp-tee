@@ -149,7 +149,7 @@ def get_attested_price():
     proc = subprocess.run(
         [
             "sudo",
-            "/home/jesserc/sevsnp-cvm/AttestationClient",  # Calls our C++ program
+            "/home/azureuser/sevsnp-tee/AttestationClient",  # Calls our C++ program
             "-p",
             str(price),
             "-o",
