@@ -15,7 +15,7 @@ contract AzureTEEVerifierTest is Test {
         // Execute Python script to get attestation params
         string[] memory inputs = new string[](2);
         inputs[0] = "python3";
-        inputs[1] = "./main.py";
+        inputs[1] = "/home/azureuser/sevsnp-tee/main.py";
 
         bytes memory result = vm.ffi(inputs);
 
