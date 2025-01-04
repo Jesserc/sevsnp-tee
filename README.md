@@ -25,21 +25,20 @@ This project demonstrates how Trusted Execution Environments (TEEs) can be utili
 ```
 
 ## Components
-
 ### Price Attestation (main.py)
-- Fetches cryptocurrency prices using CoinMarketCap API inside the TEE
-- Interacts with Azure attestation service for JWT verification
-- Prepares attestation data for on-chain verification
+- Fetches real-time cryptocurrency prices from CoinMarketCap's API using an authentication key
+- Executes a C++ Attestation Client binary (via a sub-process) which requests hardware-level attestation from the AMD SEV-SNP TEE and obtains a verified JWT token (of the attestation report) from Microsoft Azure Attestation service
+- Extracts and formats the JWT token's signature, message, security claims and price data into ABI-encoded parameters [enables smart contracts to verify the attestation on-chain]
 
 ### Onchain Attestation Verification (AzureTEEVerifier.sol)
-- Verifies RSA signatures on attestation reports
-- Validates security configuration (debug disabled, proper VM isolation)
-- Manages verified price data with staleness checks
+- Verifies the cryptographic authenticity of attestation reports using RSA signature validation against Microsoft Azure Attestation's public key [proves report wasn't tampered with]  
+- Checks TEE security claims to ensure the environment is properly hardened - including debug mode status, AMD SEV-SNP configuration, and VM isolation level [confirms secure execution]
+- Stores verified price data with timestamps and enforces 15-minute freshness window for price validity [prevents use of stale data]
 
-### Integration Testing (AzureTEEVerifier.t.sol)
-- End-to-end attestation flow testing
-- Foundry-based testing with FFI for attestation generation
-- Signature verification and price storage validation
+### Integration Testing (AzureTEEVerifier.t.sol)  
+- Executes Python-based attestation script through Foundry's FFI to obtain real hardware attestations [tests full attestation flow]
+- ABI decodes attestation parameters and validates them through the onchain verification contract [ensures verification logic works]
+- Confirms both successful signature verification and correct storage of attested price data [validates core functionality]
 
 ## Setup Requirements
 
