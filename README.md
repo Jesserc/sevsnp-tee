@@ -1,122 +1,122 @@
-# Azure SEV-SNP TEE Attestation Setup Guide
+# TEE-Verified Price Feed Using Azure Confidential VMs
 
-## Overview
+This project demonstrates how Trusted Execution Environments (TEEs) can be utilized. Here I create a secure and verifiable cryptocurrency price feed, by leveraging AMD SEV-SNP TEE technology with Azure cloud services. The key aspects include:
 
-This project enables secure price attestation for Ethereum applications running in Azure SEV-SNP TEEs. It verifies on-chain that price fetching occurred in a genuine TEE environment [Using hardware-based remote attestation to prove code execution].
+1. **Secure Price Fetching**: Prices are fetched within an encrypted TEE, isolated from the host OS and hypervisor, including the cloud provider (Azure in this case).
+
+2. **Hardware Attestation**: Azure's attestation service verifies the TEE's integrity and signs a report containing the price data and VM security configuration.
+
+3. **Multi-Layer Verification**: The signed attestation report is verified both off-chain and on-chain.
+
 
 ## Project Structure
 
 ```
-/sevsnp-cvm/
-├── SolRsaVerify/                      # Solidity verification contracts
-│
-├── confidential-computing-cvm-guest-attestation/ # Guest attestation files
-│
-├── main.py                            # Price fetching and JWT generation
-├── run.sh                             # Attestation automation
+/sevsnp-tee/
+├── SolRsaVerify/                 # Solidity verification contracts
+│   ├── src/
+│   │   ├── AzureTEEVerifier.sol  # Main attestation verification
+│   │   ├── RsaVerify.sol         # RSA signature validation
+│   ├── test/
+│   │   └── AzureTEEVerifier.t.sol # Integration tests with foundry's FFI
+├── main.py                       # Price fetching & attestation
+├── AttestationClient             # Azure TEE attestation binary  
+└── run.sh                        # Automation script
 ```
 
-## Prerequisites
+## Components
 
-- Azure SEV-SNP TEE virtual machine
-- SSH access
-- Python3 + pip
-- Foundry toolkit
+### Price Attestation (main.py)
+- Fetches cryptocurrency prices using CoinMarketCap API inside the TEE
+- Interacts with Azure attestation service for JWT verification
+- Prepares attestation data for on-chain verification
+
+### Onchain Attestation Verification (AzureTEEVerifier.sol)
+- Verifies RSA signatures on attestation reports
+- Validates security configuration (debug disabled, proper VM isolation)
+- Manages verified price data with staleness checks
+
+### Integration Testing (AzureTEEVerifier.t.sol)
+- End-to-end attestation flow testing
+- Foundry-based testing with FFI for attestation generation
+- Signature verification and price storage validation
+
+## Setup Requirements
+
+- Azure SEV-SNP VM with attestation support
+- Python 3.x with imported libraries (more details in the setup below)
+- Foundry toolkit for Solidity testing
+You're right. Let me update the Installation section to include all steps:
 
 ## Installation
 
-1. SSH into VM:
-
+1. **SSH Access Setup** (Required for VM access)
 ```bash
-ssh -i <path/to/you/rsa/private/key>.pem <username>@<vm-ip>
-# e.g. ssh -i rsa-key.pem jesserc@72.50.96.28
+# Make private key read-only for SSH security
+chmod 400 <path/to/private/key>.pem
+
+# Connect to VM
+ssh -i <path/to/private/key>.pem <username>@<vm-ip>
 ```
 
-If you get a permission issue, you can make the key read-only to solve it. Run:
-`chmod 400 <path/to/you/rsa/private/key>.pem`.
-
-2. Clone repositories:
-
+2. **Project Setup** (Get source code and dependencies)
 ```bash
+# Clone repository with submodules
 git clone --recurse-submodules https://github.com/Jesserc/sevsnp-tee.git
-cd  sevsnp-tee
-```
+cd sevsnp-tee
 
-3. Install system dependencies [Required for building C++ attestation client]:
-
-```bash
+# Install system dependencies for C++ attestation client
 sudo apt-get update
-
-sudo apt-get install -y build-essential libcurl4-openssl-dev libjsoncpp-dev libboost-all-dev cmake nlohmann-json3-dev
+sudo apt-get install -y build-essential libcurl4-openssl-dev \
+    libjsoncpp-dev libboost-all-dev cmake nlohmann-json3-dev
 ```
 
-4. Install Azure attestation package [Provides hardware attestation capabilities]:
-
+3. **Azure Attestation Setup** (For hardware attestation functionality)
 ```bash
+# Download and install Azure guest attestation package
 curl -O https://packages.microsoft.com/repos/azurecore/pool/main/a/azguestattestation1/azguestattestation1_1.0.5_amd64.deb
 sudo dpkg -i azguestattestation1_1.0.5_amd64.deb
 ```
 
-5. Build attestation client:
-
+4. **Attestation Client Build** (Compile C++ attestation code)
 ```bash
+# Build the attestation client
 cd confidential-computing-cvm-guest-attestation/cvm-attestation-sample-app
 cmake .
 make
-```
 
-6. Copy Attestation client binary to the project root and go back:
-
-```bash
+# Copy binary to project root
 cp AttestationClient ../../
 cd ../../
 ```
 
-7. Install Foundry for Solidity testing:
-   Follow instructions at https://getfoundry.sh
-
-8. Install Python package manager (pip3) and required Python packages:
-
+5. **Development Tools** (For testing and verification)
 ```bash
-# Install pip3
+# Install Python dependencies
 sudo apt-get install -y python3-pip
-
-# Install required Python packages:
 pip3 install requests cryptography eth-abi
+
+# Install Foundry toolkit for Solidity
+curl -L https://foundry.paradigm.xyz | bash
+source ~/.bashrc
+foundryup
+```
+
+6. **Final Setup** (Prepare for execution)
+```bash
+# Make run script executable
+chmod +x run.sh
 ```
 
 ## Usage
 
-Run the attestation process:
-
+Run the complete attestation & verification flow:
 ```bash
-chmod +x run.sh
-
 ./run.sh
 ```
 
-This will:
-
-1. Fetch current ETH price [Using CoinMarketCap API]
-2. Generate attestation JWT [Proves price was fetched in TEE]
-3. Verify attestation on-chain [Using RSA signature verification]
-
-## Components
-
-### Python Script (main.py)
-
-- Fetches price data
-- Interacts with attestation client
-- Prepares parameters for Solidity verification
-
-### Solidity Contract (AzureTEEVerifier.sol)
-
-- Verifies attestation signatures [Using RSA-PKCS1.5]
-- Manages attested price data
-- Provides staleness checks
-
-### Test Contract (AzureTEEVerifier.t.sol)
-
-- Validates end-to-end attestation flow
-- Tests signature verification
-- Checks price storage/retrieval
+This executes:
+1. Price fetching in TEE
+2. Attestation report generation
+3. On-chain verification
+4. Integration tests
