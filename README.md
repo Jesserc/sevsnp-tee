@@ -46,8 +46,7 @@ This project demonstrates how Trusted Execution Environments (TEEs) can be utili
 - Azure SEV-SNP VM with attestation support
 - Python 3.x with imported libraries (more details in the setup below)
 - Foundry toolkit for Solidity testing
-You're right. Let me update the Installation section to include all steps:
-
+  
 ## Installation
 
 1. **SSH Access Setup** (Required for VM access)
