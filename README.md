@@ -25,6 +25,8 @@ This project demonstrates how Trusted Execution Environments (TEEs) can be utili
 ```
 
 ## Components
+![image](https://github.com/user-attachments/assets/ed855de2-e172-440c-a1bc-7b2a3bc917fc)
+
 ### Price Attestation (main.py)
 - Fetches real-time cryptocurrency prices from CoinMarketCap's API using an authentication key
 - Executes a C++ Attestation Client binary (via a sub-process) which requests hardware-level attestation from the AMD SEV-SNP TEE and obtains a verified JWT token (of the attestation report) from Microsoft Azure Attestation service
