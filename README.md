@@ -120,3 +120,10 @@ This executes:
 2. Attestation report generation
 3. On-chain verification
 4. Integration tests
+
+## Getting the Attestation Report  
+If you want to view just the attestation report, you can run the built `AttestationClient` binary:  
+```shell
+sudo ./AttestationClient -o token
+```  
+You should receive a JWT token result, similar to what we have here: [Attestation_report_jwt.md](./Attestation_report_jwt.md).
