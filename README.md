@@ -126,4 +126,4 @@ If you want to view just the attestation report, you can run the built `Attestat
 ```shell
 sudo ./AttestationClient -o token
 ```  
-You should receive a JWT token result, similar to what we have here: [Attestation_report_jwt.md](./Attestation_report_jwt.md).
+You should get a JWT token result, similar to what we have here: [Attestation_report_jwt.md](./Attestation_report_jwt.md).
