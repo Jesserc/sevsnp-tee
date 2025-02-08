@@ -54,60 +54,6 @@ def get_signing_key(jku_url: str, target_kid: str):
         print(f"Error fetching signing key: {str(e)}")
         raise
 
-
-def verify_azure_attestation(jwt: str):
-    jwt_parts = jwt.split(".")  # [Split JWT into header, payload, signature parts]
-    header_b64 = jwt_parts[0]  # [Base64url encoded header]
-    payload_b64 = jwt_parts[1]  # [Base64url encoded attestation report]
-    signature_b64 = jwt_parts[2]  # [Base64url encoded signature]
-
-    message_to_verify = (
-        f"{header_b64}.{payload_b64}".encode()
-    )  # [Construct message that was signed - header.payload]
-    signature = base64.urlsafe_b64decode(
-        fix_base64_padding(signature_b64)
-    )  # [Decode the signature bytes for verification]
-
-    header_decoded = json.loads(
-        base64.urlsafe_b64decode(fix_base64_padding(header_b64))
-    )
-    jku_url = header_decoded[
-        "jku"
-    ]  # [Get JKU (endpoint URL) from JWT header - tells us where to find signing key]
-    kid = header_decoded[
-        "kid"
-    ]  # [Get KID from JWT header - Key ID that signed this attestation]
-
-    signing_key = get_signing_key(
-        jku_url, kid
-    )  # [Fetch the specific signing key from Azure attestation service]
-
-    key_info = signing_key.public_bytes(
-        encoding=serialization.Encoding.PEM,
-        format=serialization.PublicFormat.SubjectPublicKeyInfo,
-    )
-
-    try:
-        signing_key.verify(
-            signature,
-            message_to_verify,
-            padding.PKCS1v15(),  # [RSA PKCS#1 v1.5 padding]
-            hashes.SHA256(),  # [SHA-256 hash of message]
-        )
-        # print("Signature is valid!")  # [Attestation is genuine]
-        return True
-    except InvalidSignature:
-        print("Invalid signature - verification failed")
-        print("\nVerification details:")
-        print(f"- Signature length: {len(signature)} bytes")
-        print(f"- Message length: {len(message_to_verify)} bytes")
-        print(f"- RSA key size: {signing_key.key_size} bits")
-        return False
-    except Exception as e:
-        print("Other verification error:", str(e), type(e))
-        return False
-
-
 def get_signature_params(jwt: str):
     jwt_parts = jwt.split(".")
     header_b64 = jwt_parts[0]
@@ -233,20 +179,6 @@ if __name__ == "__main__":
     # Azure VM attestation report in JWT format
     jwt = get_attested_price()
     jwt = jwt.strip()
-
-    is_valid = verify_azure_attestation(jwt)
-
-    if not is_valid:
-        raise Exception("Invalid attestation report")
-
-    # # Get signature parameters
-    # msg, sig, e, n = get_signature_params(jwt)
-
-    # # Convert hex strings to bytes for ABI encoding [needed for Solidity bytes type]
-    # msg_bytes = bytes.fromhex(msg)
-    # sig_bytes = bytes.fromhex(sig)
-    # e_bytes = bytes.fromhex(e)
-    # n_bytes = bytes.fromhex(n)
 
     # Encode params as (bytes, bytes, bytes, bytes) for Solidity
     encoded = get_attestation_params(jwt)
